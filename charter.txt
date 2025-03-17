@@ -1,0 +1,169 @@
+Project Charter 
+
+ 
+
+Project Title - Air Quality in Enclosed Areas 
+
+ 
+
+ 
+
+Version Control 
+
+Version 
+
+Date 
+
+Summary of changes 
+
+1 
+
+07/02/25 
+
+First version 
+
+2 
+
+12/02/25 
+
+Revision to project idea 
+
+ 
+
+3 
+
+27/02/25 
+
+Revision to the project milestones 
+
+ 
+
+Project Justification  
+
+A brief summary of the project that includes reference to the commissioning organisation the target end users and providing a justification for initiating the project and the perceived key benefits. Think of the project from the perspective of your customer, this is not about what you want to achieve on the project, but what your customer wants the project to deliver and why. 
+
+ 
+
+A customer making air purifiers and wanting to show proof that they work effectively in making the air quality better in a closed room. We will have 3 different sensors that monitor the air flow, temperature, and humidity and quality. We will have data to prove that the air purifier works effectively by collecting data before the purifier is on and after it is on. This will prove that the purifier is effective or not.  
+
+           
+
+ 
+
+ 
+
+Project Scope 
+
+Objectives listed here should relate to the purpose stated above, so should be concerned with business improvement, end-user experience, quality enhancement etc. The objectives should be SMART: 
+
+S - Specific 
+
+M - Measurable 
+
+A - Achievable 
+
+R - Relevant 
+
+T – Time Bound 
+
+ 
+
+Help customer see how well their product, the air purifier, works. From the data we provide, they can use it to develop the product further and make changes as they see fit.  
+
+ 
+
+Help customer measure the air flow, temperature, and quality through the data we provide them. To measure this, we will have a database to pull from and display data on a website. 
+
+ 
+
+Help customer gain data in different closed environments which they can then use to develop their product, the air purifier. 
+
+ 
+
+It is realistic as every member of the team has assigned tasks in their area and we have a project manager to help in any area if anyone needs the support as well as means of communication to ask each other on discord for assistance or in the weekly meetings. 
+
+ 
+
+The project deadline is on the 5th of May 2025. We have about 11 weeks to complete the project. We have a goal of about 5 hours a week each to work on the project. 25 hours a week. 275 hours on the project total. 
+
+ 
+
+For more information - http://www.projectsmart.co.uk/smart-goals.php 
+
+ 
+
+High level requirements of the product or service should be identified here. 
+
+Learning Raspberry Pi 
+
+Presentation skills 
+
+Learn project software skills 
+
+Keep project files updated like Taiga. 
+
+ 
+
+ 
+
+Duration 
+
+Identify the key milestones and overall timeline for the project 
+
+ 
+
+Project Identification – Come up with ideas on what we want to do. Week 1/2 
+
+Project planning – Describe the key features of the project and identify what each of us will work on. Week 2/3 
+
+Project design – Everyone will work on their selected section and create a design plan for how they it will work. week 4/ 5  
+
+Project execution – Using the plans and designs we will start to create the system we have designed. week 5 +  
+
+Project delivery – We will have a final presentation ready and be able to showcase our project. Final week 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Estimated Budget 
+
+Estimate the hours of efforts that will be required to deliver the project and any costs associated with the purchase of equipment 
+
+ 
+
+Weekly 30 hours a week, 5 individually. 
+
+ 
+
+Roles and Responsibilities 
+
+Name 
+
+Role 
+
+Heidi wilson 
+
+Backend 
+
+Daniel Hollerer 
+
+Raspberry pi development 
+
+Srijan Chowdary Adusumilli 
+
+Frontend Development 
+
+Cameron Horne 
+
+Database 
+
+Natalia Cieslak 
+
+Project leadership 
+
+ 

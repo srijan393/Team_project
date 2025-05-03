@@ -1,212 +1,241 @@
+{% if user.is_authenticated %}
+  <form action="{% url 'clear_air_quality_data' %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-warning">Clear All Data</button>
+  </form>
+{% endif %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air Quality Monitoring</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #495057;
-        }
-        .container {
-            max-width: 1000px;
-            margin-top: 30px;
-        }
-        h1, h3 {
-            color: #343a40;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-        .btn {
-            font-weight: bold;
-        }
-        .form-control {
-            border-radius: 25px;
-            padding: 10px 15px;
-            font-size: 1.1rem;
-        }
-        .chart-container {
-            margin-top: 40px;
-        }
-        .chart-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-        .form-group label {
-            font-weight: bold;
-        }
-        .navigation-btns {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Air Quality Monitoring</title>
+
+  <!-- Bootstrap & Chart.js -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      color: #495057;
+    }
+    .container {
+      max-width: 1000px;
+      margin-top: 30px;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    .chart-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .chart-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-height: 420px;
+      padding-bottom: 10px;
+    }
+    .chart-scroll-wrapper canvas {
+      min-width: 1500px;
+      height: 400px !important;
+      display: block;
+    }
+    .navigation-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .btn {
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Page Title -->
-        <h1 class="text-center mt-5 mb-4">Air Quality Monitoring</h1>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <h2>Air Quality Graphs</h2>
+    {% if user.is_authenticated %}
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    {% endif %}
+  </div>
 
-        <!-- Navigation Buttons -->
-        <div class="navigation-btns">
-            <a href="{% url 'view_data' %}" class="btn btn-secondary"><i class="fas fa-table"></i> View All Data</a>
-            <a href="{% url 'air_quality_list' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Data</a>
-        </div>
+  <h1 class="text-center mt-4 mb-4">Air Quality Monitoring</h1>
 
-        <!-- Temperature Chart -->
-        <div class="card chart-container">
-            <h3 class="text-center chart-title">Temperature vs Time</h3>
-            <canvas id="temperatureChart"></canvas>
-        </div>
+  <div class="navigation-btns">
+    <a href="{% url 'view_data' %}" class="btn btn-secondary"><i class="fas fa-table"></i> View All Data</a>
+    <a href="{% url 'air_quality_list' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Data</a>
+  </div>
 
-        <!-- Humidity Chart -->
-        <div class="card chart-container">
-            <h3 class="text-center chart-title">Humidity vs Time</h3>
-            <canvas id="humidityChart"></canvas>
-        </div>
-
-        <!-- Air Quality Chart -->
-        <div class="card chart-container">
-            <h3 class="text-center chart-title">Air Quality vs Time</h3>
-            <canvas id="airQualityChart"></canvas>
-        </div>
-
-        <!-- Add New Data Form -->
-        <div class="card">
-            <div class="card-body">
-                <h3 class="text-center mb-4">Add New Data</h3>
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="col-md-4 mb-3">
-                            <label for="temperature">Temperature (°C)</label>
-                            {{ form.temperature }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="humidity">Humidity (%)</label>
-                            {{ form.humidity }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="air_quality">Air Quality</label>
-                            {{ form.air_quality }}
-                        </div>
-
-                    </div>
-                    <button type="submit" class="btn btn-success btn-block">Submit</button>
-                </form>
-            </div>
-        </div>
-
+  <!-- Temperature Chart -->
+  <div class="card">
+    <div class="card-body">
+      <h3 class="chart-title">Temperature vs Time</h3>
+      <div class="d-flex justify-content-center mb-2">
+        <span style="border: 10px solid rgba(75,192,192,0.4); height: 10px; margin-right: 8px;"></span>
+        <strong>Temperature (°C)</strong>
+      </div>
+      <div class="chart-scroll-wrapper">
+        <canvas id="temperatureChart" width="1500" height="400"></canvas>
+      </div>
+      <div class="text-center mt-2"><strong>Date & Time</strong></div>
     </div>
+  </div>
 
-    <script>
-        // Temperature Chart
-        var ctx1 = document.getElementById('temperatureChart').getContext('2d');
-        var temperatureChart = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: {{ data_timestamps|safe }},
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: {{ data_temperature|safe }},
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    fill: false,
-                    pointBackgroundColor: 'rgb(75, 192, 192)'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10
-                        }
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+  <!-- Humidity Chart -->
+  <div class="card">
+    <div class="card-body">
+      <h3 class="chart-title">Humidity vs Time</h3>
+      <div class="d-flex justify-content-center mb-2">
+        <span style="border: 10px solid rgba(153,102,255,0.4); height: 10px; margin-right: 8px;"></span>
+        <strong>Humidity (%)</strong>
+      </div>
+      <div class="chart-scroll-wrapper">
+        <canvas id="humidityChart" width="1500" height="400"></canvas>
+      </div>
+      <div class="text-center mt-2"><strong>Date & Time</strong></div>
+    </div>
+  </div>
 
-        // Humidity Chart
-        var ctx2 = document.getElementById('humidityChart').getContext('2d');
-        var humidityChart = new Chart(ctx2, {
-            type: 'line',
-            data: {
-                labels: {{ data_timestamps|safe }},
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: {{ data_humidity|safe }},
-                    borderColor: 'rgb(153, 102, 255)',
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    fill: false,
-                    pointBackgroundColor: 'rgb(153, 102, 255)'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10
-                        }
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+  <!-- Air Quality Chart -->
+  <div class="card">
+    <div class="card-body">
+      <h3 class="chart-title">Air Quality vs Time</h3>
+      <div class="d-flex justify-content-center mb-2">
+        <span style="border: 10px solid rgba(255,159,64,0.4); height: 10px; margin-right: 8px;"></span>
+        <strong>Air Quality</strong>
+      </div>
+      <div class="chart-scroll-wrapper">
+        <canvas id="airQualityChart" width="1500" height="400"></canvas>
+      </div>
+      <div class="text-center mt-2"><strong>Date & Time</strong></div>
+    </div>
+  </div>
 
-        // Air Quality Chart
-        var ctx3 = document.getElementById('airQualityChart').getContext('2d');
-        var airQualityChart = new Chart(ctx3, {
-            type: 'line',
-            data: {
-                labels: {{ data_timestamps|safe }},
-                datasets: [{
-                    label: 'Air Quality',
-                    data: {{ data_air_quality|safe }},
-                    borderColor: 'rgb(255, 159, 64)',
-                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                    fill: false,
-                    pointBackgroundColor: 'rgb(255, 159, 64)'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10
-                        }
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
+  <!-- Add New Data Form -->
+  <div class="card">
+    <div class="card-body">
+      <h3 class="text-center mb-4">Add New Data</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="temperature">Temperature (°C)</label>
+            {{ form.temperature }}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="humidity">Humidity (%)</label>
+            {{ form.humidity }}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="air_quality">Air Quality</label>
+            {{ form.air_quality }}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
 
-    <!-- Bootstrap & JS Libraries -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Chart Scripts -->
+<script>
+  const timeLabels = {{ data_timestamps|safe }};
+
+  const chartOptions = {
+    responsive: false,
+    maintainAspectRatio: false,
+    animation: false,
+    scales: {
+      x: {
+        title: { display: false },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 15,
+          maxRotation: 0,
+          minRotation: 0,
+          font: { size: 10 }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Value' },
+        ticks: { font: { size: 12 } }
+      }
+    },
+    plugins: {
+      legend: { display: false }
+    }
+  };
+
+  new Chart(document.getElementById('temperatureChart'), {
+    type: 'line',
+    data: {
+      labels: timeLabels,
+      datasets: [{
+        label: 'Temperature (°C)',
+        data: {{ data_temperature|safe }},
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: false
+      }]
+    },
+    options: chartOptions
+  });
+
+  new Chart(document.getElementById('humidityChart'), {
+    type: 'line',
+    data: {
+      labels: timeLabels,
+      datasets: [{
+        label: 'Humidity (%)',
+        data: {{ data_humidity|safe }},
+        borderColor: 'rgb(153, 102, 255)',
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        fill: false
+      }]
+    },
+    options: chartOptions
+  });
+
+  new Chart(document.getElementById('airQualityChart'), {
+    type: 'line',
+    data: {
+      labels: timeLabels,
+      datasets: [{
+        label: 'Air Quality',
+        data: {{ data_air_quality|safe }},
+        borderColor: 'rgb(255, 159, 64)',
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        fill: false
+      }]
+    },
+    options: chartOptions
+  });
+
+  window.onload = function () {
+    document.querySelectorAll('.chart-scroll-wrapper').forEach(wrapper => {
+      wrapper.scrollLeft = wrapper.scrollWidth;
+    });
+  };
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>
